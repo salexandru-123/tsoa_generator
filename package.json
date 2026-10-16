@@ -1,0 +1,24 @@
+{
+    "name": "@salexandru-123/tsoa_generator",
+    "version": "1.0.0",
+    "description": "A simple bash scripting package that allows the user to generate a fully working tsoa project",
+    "keywords": [],
+    "homepage": "https://github.com/salexandru-123/tsoa_generator#readme",
+    "bugs": {
+        "url": "https://github.com/salexandru-123/tsoa_generator/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/salexandru-123/tsoa_generator.git"
+    },
+    "license": "ISC",
+    "author": "Stefan Alexandru Soreanu",
+    "type": "module",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "bin": {
+        "tsoa_generate": "/bin/tsoa_generate.sh"
+    }
+}

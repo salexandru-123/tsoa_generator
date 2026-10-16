@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash 
 
 if ! command -v pnpm >/dev/null 2>&1
 then
@@ -10,6 +10,18 @@ then
     fi
     
 fi
+
+if [ -z "$1" ]; then
+    echo "Error: No path defined."
+    echo "Creating tsoa project in $(pwd)"
+    exit 1
+fi
+
+
+PROJECT_PATH="$1"
+
+mkdir -p "$PROJECT_PATH" && cd "$PROJECT_PATH" && pwd
+
 pnpm init -y 
 pnpm add tsoa express @tsoa/runtime swagger-ui-express cors multer 
 pnpm approve-builds --all
