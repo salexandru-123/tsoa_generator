@@ -1,0 +1,123 @@
+#!/bin/bash
+
+if ! command -v pnpm >/dev/null 2>&1
+then
+    if ! command -v npm >/dev/null 2>&1
+    then 
+        curl -fsSL https://get.pnpm.io/install.sh | sh -
+    else
+        npm install -g pnpm@latest-11
+    fi
+    
+fi
+pnpm init -y 
+pnpm add tsoa express @tsoa/runtime swagger-ui-express cors multer 
+pnpm approve-builds --all
+pnpm add -D ts-node-dev typescript @types/node @types/express  @types/cors @types/multer tsx @types/swagger-ui-express
+pnpm approve-builds --all
+pnpm tsc --init 
+
+mkdir src src/controllers src/services
+touch ./src/main.ts
+
+touch .gitignore & echo -e "node_modules/\n.env" >> ./.gitignore
+
+cat <<'EOF' > ./tsoa.json
+{
+    "entryFile": "src/main.ts",
+    "noImplicitAdditionalProperties": "throw-on-extras",
+    "controllerPathGlobs": ["src/**/*Controller.ts"],
+    "spec": {
+        "outputDirectory": ".",
+        "specVersion": 3.1
+    },
+    "routes": {
+        "basePath": "/",
+        "routesDir": "src",
+        "middleware": "express"
+    }
+}
+EOF
+
+cat <<'EOF' > ./tsconfig.json
+{
+    "compilerOptions": {
+        "rootDir": "./src",
+
+        "module": "nodenext",
+        "target": "esnext",
+        "lib": ["esnext"],
+        "types": ["node"],
+
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalPropertyTypes": false,
+
+        "strict": true,
+        "jsx": "react-jsx",
+        "verbatimModuleSyntax": false,
+        "isolatedModules": true,
+        "noUncheckedSideEffectImports": true,
+        "moduleDetection": "force",
+        "skipLibCheck": true,
+        "noEmit": true,
+
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true
+    }
+}
+EOF
+
+sed -i '/"scripts": {/a\
+\n  "start": "pnpm tsoa spec-and-routes && pnpm tsx watch src/main.ts",\n' ./package.json && sed -i 's/"type": "module"/"type": "commonjs"/' ./package.json
+
+cat <<'EOF' > ./src/main.ts
+import express, { NextFunction, Request, Response } from "express";
+import { RegisterRoutes } from "./routes";
+import multer, { memoryStorage } from "multer";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "../swagger.json";
+import cors from "cors";
+
+const app = express();
+
+app.use(cors({ origin: "http://localhost", credentials: true }));
+app.use(express.urlencoded());
+app.use(express.json());
+app.use((req, res, next) => {
+    console.log(`Request ${req.method} on endpoint ${req.url} received.`);
+    next();
+});
+const storage = multer({ storage: memoryStorage() });
+RegisterRoutes(app, { multer: storage });
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.get("/", (req: Request, res: Response) => {
+    return res.status(200).send("Success");
+});
+
+app.use((err: unknown, req: Request, res: Response, next: NextFunction) => {
+    if (err instanceof Error) {
+        return res
+            .status(500)
+            .send({ message: err.message, stack: err.stack, cause: err.cause });
+    }
+    next();
+});
+app.listen(3000, "0.0.0.0", async () => {
+    console.log("Server listening on port 3000");
+});
+EOF
+
+
+
+cat <<'EOF' > ./src/controllers/testController.ts
+import { Controller, Route, Get, SuccessResponse } from "tsoa";
+@Route("/test")
+export class TestController extends Controller {
+    @Get("")
+    @SuccessResponse(200, "success")
+    public getTest() {
+        return "Hello world";
+    }
+}
+EOF
