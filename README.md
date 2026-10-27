@@ -1,6 +1,8 @@
 # TSOA generator
 
 This package allows the users to generate a fully functional Tsoa documented project with Typescript.
+The package uses pnpm as the main package manager, since it's faster than npm.
+
 
 # Install
 
