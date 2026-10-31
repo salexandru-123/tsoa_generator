@@ -22,8 +22,9 @@ PROJECT_PATH="$1"
 
 mkdir -p "$PROJECT_PATH" && cd "$PROJECT_PATH" && pwd
 
+
 pnpm init -y 
-pnpm add tsoa express @tsoa/runtime swagger-ui-express cors multer 
+pnpm add --allow-build=@scarf/scarf --allow-build=esbuild tsoa express @tsoa/runtime swagger-ui-express cors multer 
 pnpm approve-builds --all
 pnpm add -D ts-node-dev typescript @types/node @types/express  @types/cors @types/multer tsx @types/swagger-ui-express
 pnpm approve-builds --all
