@@ -11,13 +11,13 @@ A cross-platform CLI for generating TypeScript projects using TSOA and Express.
 
 Using npm:
 ```
-npm install -g @salexandru-123/tsoa_generator
+npm install -g tsoa_generator
 
 ```
 
 Using pnpm:
 ```
-pnpm install -g @salexandru-123/tsoa_generator
+pnpm install -g tsoa_generator
 ```
 
 ## Usage

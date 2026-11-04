@@ -1,6 +1,6 @@
 {
     "name": "tsoa_generator",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "description": "A simple bash scripting package that allows the user to generate a fully working tsoa project",
     "keywords": [
         "tsoa",
